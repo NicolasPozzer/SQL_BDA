@@ -97,4 +97,9 @@ SELECT CLI.DNI, PROD.CodigoProducto, 1
 FROM cliente CLI, producto PROD
 WHERE year(CLI.Fecha_nacimiento) >= 1989 AND PROD.CodigoProducto = 101;
 
+# TRAER LOS PRODUCTOS QUE TENGAN UNA CANTIDAD ENTRE 5 Y 20
+SELECT *
+FROM cliente_compra_producto CCP
+WHERE CCP.Cantidad >= 5 AND CCP.Cantidad <= 20;
+
 
