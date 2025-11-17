@@ -56,19 +56,31 @@ SELECT * FROM PRODUCTO WHERE CODIGOPRODUCTO = 12;
 
 
 
-
-
 /* 5. Genere una vista llamada “Buenos_Clientes” que tenga el apellido, nombre, fecha de nacimiento, y 
 cantidad total de productos, de aquellos clientes que compraron más de 5 productos iguales o diferentes 
 en total. */
+CREATE OR REPLACE VIEW `buenos_clientes` AS
+SELECT CLI.NOMBRE, CLI.APELLIDO, CLI.FECHA_NACIMIENTO, SUM(CCC.CANTIDAD) AS cantidadproductos
+FROM CLIENTE CLI
+INNER JOIN CLIENTE_COMPRA_PRODUCTO CCC ON CCC.DNI = CLI.DNI
+GROUP BY CLI.DNI
+HAVING cantidadproductos > 5;     -- SON 59 CLIENTES ACTUALMENTE
 
 /* 6. Realice un select a la vista Buenos_clientes. ¿Cuántos registros devuelve? */
+SELECT * FROM buenos_clientes;
+
 
 /* 7. Agregar un registro en la tabla cliente_compra_producto, donde el cliente cuyo DNI = 31325083, compro 12  
 ‘Yogur natural 190g'. Controlar ya que los nombres de los productos pueden tener espacios delante y 
 detrás. */
+INSERT INTO CLIENTE_COMPRA_PRODUCTO
+(SELECT CLI.DNI, PRO.CODIGOPRODUCTO, 12
+FROM CLIENTE CLI, PRODUCTO PRO
+WHERE CLI.DNI = 32141924 AND
+      PRO.NOMBRE LIKE ' Manteca 200g ' );
 
 /* 8. Realice nuevamente un select a la vista Buenos_clientes. ¿Cuántos registros devuelve? */
+SELECT * FROM buenos_clientes;
 
 /* 9. Genere una función que calcule la edad de un cliente, donde uno pueda realizar 
 edad(cliente.fecha_nacimiento) y devuelva un valor entero que corresponde a la edad del cliente. */
