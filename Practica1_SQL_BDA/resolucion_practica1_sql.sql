@@ -51,6 +51,16 @@ LEFT JOIN cliente_compra_producto CCP
 
 -- 10. Liste el nombre del producto, nombre del proveedor y precio de venta, de aquellos productos que tienen 
 -- mas de un proveedor asociado. 
+SELECT PROD.Nombre, prov.Nombre, PROD.Precio_venta
+FROM producto PROD
+INNER JOIN producto_proveedor PP
+	ON PP.CodigoProducto = PROD.CodigoProducto
+INNER JOIN proveedor prov
+	ON prov.CUIT = PP.CUIT
+WHERE PROD.CodigoProducto in
+	(SELECT P1.CodigoProducto
+    FROM producto_proveedor P1
+    WHERE P1.CUIT <> PP.CUIT); # <> significa "Distinto de"
 
 -- 11. Agregue un nuevo producto, con las siguientes características: 
 #	Codigo Producto 
@@ -59,9 +69,32 @@ LEFT JOIN cliente_compra_producto CCP
 #	Telefono Celular SAMSUNG S25 
 #	Precio Venta 
 #	2389000 
+INSERT INTO `producto` (`CodigoProducto`, `Nombre`, `Precio_venta`)
+VALUES ('101', 'Telefono Celular SAMSUNG S25', '2389000');
+
+SELECT *
+FROM PROVEEDOR
+WHERE PROVEEDOR.CUIT LIKE "20172019731";
+
 
 -- 12. Agregue en la tabla Producto_proveedor que el teléfono cargado en el item anterior es provisto por el 
--- proveedor cuyo nombre es Megatone y el costo es igual al 60% del precio de venta.  
+-- proveedor cuyo nombre es Megatone y el costo es igual al 60% del precio de venta.
+INSERT INTO producto_proveedor 
+SELECT  PROD.CodigoProducto, Prove.CUIT, 1, PROD.Precio_Venta * 0.60
+FROM PRODUCTO PROD, PROVEEDOR PROVE
+WHERE PROD.CodigoProducto = 101 AND
+      PROVE.CUIT LIKE "20172019731";
+
+# query para comprobar si se agrego
+SELECT * 
+FROM producto_proveedor PP
+where PP.CodigoProducto = 101;
 
 -- 13. Insertar en la tabla Cliente_Compra_Producto los registros que respondan a que todos los clientes nacidos 
--- a partir del año 1989 han comprado solo una unidad del celular Samsung agregado en el punto 11.  
+-- a partir del año 1989 han comprado solo una unidad del celular Samsung agregado en el punto 11.
+INSERT INTO cliente_compra_producto
+SELECT CLI.DNI, PROD.CodigoProducto, 1
+FROM cliente CLI, producto PROD
+WHERE year(CLI.Fecha_nacimiento) >= 1989 AND PROD.CodigoProducto = 101;
+
+
