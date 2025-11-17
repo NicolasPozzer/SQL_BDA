@@ -1,3 +1,4 @@
+USE u2_ejercicio1;
 #SELECT * FROM u2_ejercicio1.cliente;
 
 
