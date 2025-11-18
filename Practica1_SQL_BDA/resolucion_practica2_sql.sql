@@ -85,6 +85,7 @@ SELECT * FROM buenos_clientes;
 /* 9. Genere una función que calcule la edad de un cliente, donde uno pueda realizar 
 edad(cliente.fecha_nacimiento) y devuelva un valor entero que corresponde a la edad del cliente. */
 
+
 /* 10. Utilizando la función generada en el punto anterior, genere un listado que muestre el apellido, nombre y 
 edad de los clientes ordenados alfabéticamente por apellido y nombre. */
 
