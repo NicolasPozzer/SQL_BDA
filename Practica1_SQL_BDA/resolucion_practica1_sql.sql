@@ -51,16 +51,18 @@ LEFT JOIN cliente_compra_producto CCP
 
 -- 10. Liste el nombre del producto, nombre del proveedor y precio de venta, de aquellos productos que tienen 
 -- mas de un proveedor asociado. 
-SELECT PROD.Nombre, prov.Nombre, PROD.Precio_venta
+SELECT PROD.Nombre, PROV.Nombre, PROD.Precio_venta
 FROM producto PROD
-INNER JOIN producto_proveedor PP
-	ON PP.CodigoProducto = PROD.CodigoProducto
-INNER JOIN proveedor prov
-	ON prov.CUIT = PP.CUIT
-WHERE PROD.CodigoProducto in
-	(SELECT P1.CodigoProducto
-    FROM producto_proveedor P1
-    WHERE P1.CUIT <> PP.CUIT); # <> significa "Distinto de"
+INNER JOIN producto_proveedor PP 
+    ON PP.CodigoProducto = PROD.CodigoProducto
+INNER JOIN proveedor PROV
+    ON PROV.CUIT = PP.CUIT
+WHERE PROD.CodigoProducto IN (
+    SELECT PProv.CodigoProducto
+    FROM producto_proveedor PProv
+    GROUP BY PProv.CodigoProducto
+    HAVING COUNT(*) > 1
+);
 
 -- 11. Agregue un nuevo producto, con las siguientes características: 
 #	Codigo Producto 
@@ -72,24 +74,27 @@ WHERE PROD.CodigoProducto in
 INSERT INTO `producto` (`CodigoProducto`, `Nombre`, `Precio_venta`)
 VALUES ('101', 'Telefono Celular SAMSUNG S25', '2389000');
 
-SELECT *
-FROM PROVEEDOR
-WHERE PROVEEDOR.CUIT LIKE "20172019731";
-
-
 -- 12. Agregue en la tabla Producto_proveedor que el teléfono cargado en el item anterior es provisto por el 
 -- proveedor cuyo nombre es Megatone y el costo es igual al 60% del precio de venta.
+SELECT *
+FROM proveedor PRO
+WHERE PRO.CUIT = "23171579449";
+
+# actualizacion de nombre de Proveedor
+UPDATE proveedor 
+SET Nombre = "Megatone"
+WHERE CUIT = 23171579449;
+
 INSERT INTO producto_proveedor 
-SELECT  PROD.CodigoProducto, Prove.CUIT, 1, PROD.Precio_Venta * 0.60
-FROM PRODUCTO PROD, PROVEEDOR PROVE
+SELECT  PROD.CodigoProducto, PROVE.CUIT, 1, PROD.Precio_Venta * 0.60
+FROM producto PROD, proveedor PROVE
 WHERE PROD.CodigoProducto = 101 AND
-      PROVE.CUIT LIKE "20172019731";
+      PROVE.CUIT LIKE "23171579449";
 
 # query para comprobar si se agrego
 SELECT * 
 FROM producto_proveedor PP
-where PP.CodigoProducto = 101;
-
+where PP.CodigoProducto = 101 and PP.CUIT = "23171579449";
 -- 13. Insertar en la tabla Cliente_Compra_Producto los registros que respondan a que todos los clientes nacidos 
 -- a partir del año 1989 han comprado solo una unidad del celular Samsung agregado en el punto 11.
 INSERT INTO cliente_compra_producto
@@ -101,5 +106,9 @@ WHERE year(CLI.Fecha_nacimiento) >= 1989 AND PROD.CodigoProducto = 101;
 SELECT *
 FROM cliente_compra_producto CCP
 WHERE CCP.Cantidad >= 5 AND CCP.Cantidad <= 20;
+
+
+
+
 
 
