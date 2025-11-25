@@ -1,0 +1,53 @@
+1ra Forma Normal: Teniendo en cuenta, que la primera forma normal indica que no puede haber grupos 
+repetitivos en una columna, la columna Telefono no cumple con esta, ya que una persona puede tener varios teléfonos, entonces lo ideal es crear otra tabla donde podamos definir el nro de teléfono y el id asociado al mismo: 
+Telefono(@nroTelefono, idCliente).
+Cliente(idCliente, Nombre, Apellido, Direccion, CiudadCliente)
+y la tabla Factura quedaria asi:
+Factura(@NroFactura, @TipoFactura, @idPuestoVenta, FECHA_FAC, #ID_CLIENTE, CATEGORIA, COD_PROD, DESP_PROD, VAL_UNIT, CANT_PROD)
+De esta forma, cumplimos con la 1ra Forma Normal. 
+
+2da Forma Normal: Ahora procederemos a aplicar la segunda formal normal, es decir, tenemos que eliminar 
+cualquier columna no clave que no dependa de la clave primaria de la tabla.  
+Pedido(@CodPedido, fecha, NombreCliente, idCliente, Provincia) ->Cumple 2da Forma Normal. 
+EmailCliente(@emailcliente, idCliente)-> Cumple 2º Forma Normal. 
+Pedido_Articulo(@#CodPedido,@CodArticulo, NombreArt, cant, Precio) ->NO cumple 2º Forma Normal, ya 
+que NombreArt, solo depende de parte de la clave, solo depende de @CodArticulo, y Precio también solo 
+depende de parte de la clave, solo de @CodArticulo. Para solucionar este problema, generamos una nueva 
+tabla Articulo, con los atributos del articulo: 
+Articulo(@CodArticulo, NombreArt, Precio) -> Cumple 2º Forma Normal. 
+Y modificamos la tabla Pedido_Articulo, quedando: 
+Pedido_Articulo(@#CodPedido, @#codArticulo, cant) -> Cumple 2º Forma Normal 
+Podemos ver que ambas tablas están en 2da Forma Normal, ya que cada campo no clave, depende de la 
+clave. 
+
+3. 3º Forma Normal: La tercera forma normal nos dice que tenemos que eliminar cualquier columna no clave 
+que sea dependiente de otra columna no clave. Los pasos a seguir son: 
+o Determinar las columnas que son dependientes de otra columna no clave. 
+o Eliminar esas columnas de la tabla base. 
+o Crear una segunda tabla con esas columnas y con la columna no clave de la cual son dependientes. 
+Teniendo en cuenta estos puntos, podemos decir que el campo NombreCliente, depende de IdCliente, el 
+campo Provincia depende de IdCliente. Teniendo en cuenta esto, surge la necesidad de crear al menos una 
+nueva tabla: Cliente. A continuación se muestra como quedan conformadas: 
+Cliente(@idCliente, NombreCliente, Provincia) 
+Y las tablas ya definidas anteriormente quedan de la siguiente forma: 
+Pedido(@CodPedido,#idCliente, fecha) 
+Articulo(@CodArticulo, NombreArt, Precio) 
+Pedido_Art(@#CodPedido, @#CodArticulo, cant) 
+EmailCliente(@emailCliente, #idCliente) 
+De esta forma obtenemos una BD normalizada hasta la 3ra Forma Normal
+
+Factura(@NroFactura, @TipoFactura, @idPuestoVenta, #idCliente)
+
+Detalle_FacturaProd(@#NroFactura, @#TipoFactura, @#idPuestoVenta, #codProducto, cant_producto)
+
+TipoFactura(@TipoFactura, Descrip)
+
+PuestoVenta(@idPuestoVenta, Direccion) 
+
+Cliente(@idCliente, Nombre, Apellido, Direccion, CiudadCliente) 
+
+Teléfono(@NroTelefono, #idCliente)
+
+Producto(@codProducto, nombreProducto, categoria, precio)
+
+

@@ -1,0 +1,49 @@
+1º Forma Normal: Teniendo en cuenta, que la primera forma normal indica que no puede haber grupos 
+repetitivos en una columna, vemos que la columna EmailCliente no cumple con esta, por lo cual podemos 
+pensar en generar una nueva afinidad que contenga el email de los clientes, con lo que generamos: 
+EmailCliente(@emailCliente, idCliente).  
+
+Además, la primera forma normal, indica que cada Tabla/afinidad debe estar correctamente definida en el 
+concepto de unicidad en cada registro. En este caso, si asumimos que el CodPedido es la clave primaria, 
+vemos que no se cumple el requisito de unicidad, ya que para el CodPedido = 1001 por ejemplo, tenemos 3 
+tuplas con valores distintos, por lo que debemos generar una nueva afinidad: 
+Pedido_Articulo(@CodPedido,@CodArticulo, NombreArt, cant, Precio) 
+Y la afinidad Pedido nos queda de la siguiente forma: 
+Pedido(@CodPedido, fecha, NombreCliente, idCliente, Provincia) 
+De esta forma, cumplimos con la 1º Forma Normal. 
+
+
+
+2. 2º Forma Normal: Ahora procederemos a aplicar la segunda formal normal, es decir, tenemos que eliminar 
+cualquier columna no clave que no dependa de la clave primaria de la tabla.  
+Pedido(@CodPedido, fecha, NombreCliente, idCliente, Provincia) ->Cumple 2º Forma Normal. 
+EmailCliente(@emailcliente, idCliente)-> Cumple 2º Forma Normal. 
+Pedido_Articulo(@#CodPedido,@CodArticulo, NombreArt, cant, Precio) ->NO cumple 2º Forma Normal, ya 
+que NombreArt, solo depende de parte de la clave, solo depende de @CodArticulo, y Precio también solo 
+depende de parte de la clave, solo de @CodArticulo. Para solucionar este problema, generamos una nueva 
+tabla Articulo, con los atributos del articulo: 
+Articulo(@CodArticulo, NombreArt, Precio) -> Cumple 2º Forma Normal. 
+Y modificamos la tabla Pedido_Articulo, quedando: 
+Pedido_Articulo(@#CodPedido, @#codArticulo, cant) -> Cumple 2º Forma Normal 
+Podemos ver que ambas tablas están en 2da Forma Normal, ya que cada campo no clave, depende de la 
+clave. 
+
+
+
+
+
+3. 3º Forma Normal: La tercera forma normal nos dice que tenemos que eliminar cualquier columna no clave 
+que sea dependiente de otra columna no clave. Los pasos a seguir son: 
+o Determinar las columnas que son dependientes de otra columna no clave. 
+o Eliminar esas columnas de la tabla base. 
+o Crear una segunda tabla con esas columnas y con la columna no clave de la cual son dependientes. 
+Teniendo en cuenta estos puntos, podemos decir que el campo NombreCliente, depende de IdCliente, el 
+campo Provincia depende de IdCliente. Teniendo en cuenta esto, surge la necesidad de crear al menos una 
+nueva tabla: Cliente. A continuación se muestra como quedan conformadas: 
+Cliente(@idCliente, NombreCliente, Provincia) 
+Y las tablas ya definidas anteriormente quedan de la siguiente forma: 
+Pedido(@CodPedido,#idCliente, fecha) 
+Articulo(@CodArticulo, NombreArt, Precio) 
+Pedido_Art(@#CodPedido, @#CodArticulo, cant) 
+EmailCliente(@emailCliente, #idCliente) 
+De esta forma obtenemos una BD normalizada hasta la 3º Forma Normal 
